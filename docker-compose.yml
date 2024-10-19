@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  excelreaderapi:
+    image: ghcr.io/seabizkit/excelreaderapi:latest
+    container_name: excelreaderapi
+    ports:
+      - "8080:8080"
+    restart: always
+    
+  excelwriterapi:
+    image: ghcr.io/seabizkit/excelwriterapi:latest
+    container_name: excelwriterapi
+    ports:
+      - "8081:8080"
+    restart: always
+    
+  paradoxftpapi:
+    image: ghcr.io/seabizkit/paradoxftpapi:latest
+    container_name: paradoxftpapi
+    ports:
+      - "8082:8080"
+    restart: always
+
+  paradoximageapi:
+    image: ghcr.io/seabizkit/paradoximageapi:latest
+    container_name: paradoximageapi
+    ports:
+      - "8083:8080"
+    restart: always
+      
+  textreaderapi:
+    image: ghcr.io/seabizkit/paradoxtextreaderapi:latest
+    container_name: textreaderapi
+    ports:
+      - "8084:8080"
+    restart: always
+
+  redis:
+    image: "redis:latest"
+    container_name: redis_container
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: always
+
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb_container
+    environment:
+      - MYSQL_ROOT_PASSWORD=noguessing
+      - MYSQL_USER=ParadoxPiUser
+      - MYSQL_PASSWORD=noguessing
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+      - ./initdb:/docker-entrypoint-initdb.d  # Mount the initdb directory
+    restart: always
+    command: --bind-address=0.0.0.0
+
+volumes:
+  redis_data:
+    driver: local  
+  mariadb_data:
+    driver: local
