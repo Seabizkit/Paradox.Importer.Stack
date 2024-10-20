@@ -56,12 +56,31 @@ services:
       - "3306:3306"
     volumes:
       - mariadb_data:/var/lib/mysql
-      - ./initdb/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./initdb:/docker-entrypoint-initdb.d  # Mount the initdb directory
     restart: always
     command: --bind-address=0.0.0.0
+
+  paradoxwebapp:
+    image: ghcr.io/seabizkit/paradoxwebapp:latest
+    container_name: paradoxwebapp
+    ports:
+        - "8085:8080"
+    volumes:
+        - paradoxwebapp_data:/home/pi/WebsiteArm/App_Data  # Mapping disk access
+    depends_on:
+        - mariadb
+        - redis
+        - excelreaderapi
+        - excelwriterapi
+        - paradoxftpapi
+        - paradoximageapi
+        - textreaderapi
+    restart: always
 
 volumes:
   redis_data:
     driver: local  
   mariadb_data:
+    driver: local
+  paradoxwebapp_data:   # Volume for paradoxwebapp to talk to disk
     driver: local
